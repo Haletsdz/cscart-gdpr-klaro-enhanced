@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тестовый стенд GDPR (Klaro v0.7.22)</title>
+    <link rel="stylesheet" href="../var/themes_repository/responsive/css/addons/gdpr/klaro.css">
+    <style>
+        body {
+            font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+            color: #333;
+        }
+        .test-panel {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #0086e6; margin-top: 0; }
+        h2 { color: #555; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .info { background: #e8f4fd; padding: 15px; border-radius: 6px; margin: 15px 0; }
+        .info code { background: #d0e8f5; padding: 2px 6px; border-radius: 3px; }
+        .check-list { list-style: none; padding: 0; }
+        .check-list li { padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+        .check-list li::before { content: "☐ "; color: #999; }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #0086e6;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px 5px 5px 0;
+        }
+        .btn:hover { background: #0697ff; }
+        .btn-danger { background: #c44; }
+        .btn-danger:hover { background: #a33; }
+        .version-badge {
+            display: inline-block;
+            background: #28a745;
+            color: #fff;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .status { margin-top: 20px; padding: 15px; border-radius: 6px; }
+        .status-warn { background: #fff3cd; color: #856404; }
+        #consent-log {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin-top: 15px;
+        }
+        #consent-log .log-time { color: #888; }
+        #consent-log .log-accept { color: #4ec9b0; }
+        #consent-log .log-decline { color: #f48771; }
+        #consent-log .log-info { color: #569cd6; }
+
+        /* === Стили Velobike.by для Klaro === */
+        
+        /* === Стили Velobike.by для Klaro (Безопасная версия) === */
+        
+        /* 1. Базовые переменные Klaro */
+        .klaro {
+            --green1: #ffd600; /* Желтый - включенный ползунок */
+            --green2: #e5c000; /* Желтый при наведении */
+            --green3: #ff4a4a; /* Красный */
+            --blue1: #0086e6;  /* Синие ссылки в модалке */
+            --light1: #ffffff; /* Текст на темном фоне */
+            --dark1: #18233e;  /* Темно-синий фон шапки Velobike */
+            --white1: #ffffff; /* Фон модального окна */
+            --font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+            --border-radius: 4px;
+            --notice-max-width: 100%; /* Баннер на всю ширину */
+            --notice-bottom: 0;
+            --notice-left: 0;
+        }
+
+        /* 2. Стили для нижнего баннера (уведомления) */
+        .klaro .cookie-notice {
+            background-color: #18233e !important; /* Темно-синий фон */
+            border-top: 3px solid #ffd600 !important; /* Желтая полоска сверху */
+            padding: 20px 0 !important; /* Убираем боковые отступы, они будут во внутреннем блоке */
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.2) !important;
+        }
+
+        /* Выравнивание по центру экрана с макс. шириной (Flexbox) */
+        .klaro .cookie-notice .cn-body {
+            max-width: 1200px !important; /* Не даем тексту разъезжаться на 4K мониторах */
+            margin: 0 auto !important;
+            padding: 0 20px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            flex-wrap: wrap !important;
+            gap: 20px !important;
+        }
+
+        /* Текст внутри баннера */
+        .klaro .cookie-notice .cn-body p,
+        .klaro .cookie-notice .cn-body .cn-text {
+            flex: 1 1 500px !important; /* Текст занимает свободное место, но не меньше 500px если позволяет экран */
+            color: #ffffff !important;
+            font-size: 14px !important;
+            line-height: 1.6 !important;
+            margin: 0 !important;
+            padding-right: 20px !important;
+        }
+
+        /* Контейнер для кнопок и ссылок */
+        .klaro .cookie-notice .cn-buttons {
+            display: flex !important;
+            align-items: center !important;
+            gap: 15px !important;
+            flex-wrap: wrap !important;
+            margin: 0 !important;
+        }
+
+        /* Ссылка "Настроить" */
+        .klaro .cookie-notice .cn-learn-more {
+            color: #ffffff !important;
+            text-decoration: underline !important;
+            font-weight: 400 !important;
+            margin: 0 !important;
+            padding-right: 15px !important;
+            opacity: 0.7 !important;
+            font-size: 13px !important;
+            transition: opacity 0.2s, color 0.2s !important;
+        }
+        .klaro .cookie-notice .cn-learn-more:hover {
+            color: #ffd600 !important;
+            opacity: 1 !important;
+        }
+
+        /* 3. Общие стили кнопок */
+        .klaro .cm-btn {
+            text-transform: uppercase !important;
+            font-weight: 700 !important;
+            font-size: 12px !important;
+            letter-spacing: 0.5px !important;
+            border-radius: 4px !important;
+            padding: 10px 20px !important;
+            margin: 0 !important;
+        }
+
+        /* 4. Кнопки в нижнем баннере (Темный фон) */
+        /* Кнопка "Принять" */
+        .klaro .cookie-notice .cm-btn-success,
+        .klaro .cookie-notice .cm-btn-accept {
+            background-color: #ffd600 !important;
+            color: #18233e !important; /* Темный текст на желтом */
+            border: none !important;
+        }
+        .klaro .cookie-notice .cm-btn-success:hover,
+        .klaro .cookie-notice .cm-btn-accept:hover {
+            background-color: #e5c000 !important;
+        }
+        
+        /* Кнопка "Отклонить все" */
+        .klaro .cookie-notice .cm-btn-danger {
+            background-color: transparent !important;
+            border: 1px solid rgba(255, 255, 255, 0.4) !important;
+            color: #ffffff !important;
+            opacity: 0.9 !important;
+        }
+        .klaro .cookie-notice .cm-btn-danger:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            border-color: #ffffff !important;
+            opacity: 1 !important;
+        }
+
+        /* 5. Кнопки в модальном окне настроек (Светлый фон) */
+        .klaro .cookie-modal {
+            color: #333 !important; /* Темный текст */
+            overscroll-behavior: contain; /* Блокировка прокрутки фона для старых браузеров */
+        }
+        
+        /* БЛОКИРОВКА ПРОКРУТКИ СТРАНИЦЫ ПРИ ОТКРЫТОМ МОДАЛЬНОМ ОКНЕ */
+        body:has(.klaro .cookie-modal) {
+            overflow: hidden !important;
+        }
+        .klaro .cookie-modal .cm-btn-success,
+        .klaro .cookie-modal .cm-btn-accept {
+            background-color: #ffd600 !important;
+            color: #18233e !important;
+        }
+        .klaro .cookie-modal .cm-btn-danger {
+            background-color: transparent !important;
+            border: 1px solid #ccc !important;
+            color: #555 !important;
+        }
+        .klaro .cookie-modal .cm-btn-info {
+            background-color: transparent !important;
+            border: 1px solid #0086e6 !important;
+            color: #0086e6 !important;
+        }
+        .klaro .cookie-modal .cm-btn-info:hover {
+            background-color: #0086e6 !important;
+            color: #fff !important;
+        }
+
+        /* 6. Исправление ползунков (чтобы кружок не сливался с фоном) */
+        .klaro .slider {
+            background-color: #777777 !important; /* Отчетливый серый фон выключенного ползунка */
+        }
+        .klaro .cm-list-input:checked + .cm-list-label .slider {
+            background-color: #ffd600 !important; /* Желтый фон включенного ползунка */
+        }
+        .klaro .slider::before {
+            background-color: #ffffff !important; /* Белый кружок */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4) !important; /* Небольшая тень для объема */
+        }
+
+        /* 7. Фикс читаемости текста (Адаптация под темную и светлую тему) */
+        
+        /* Текст описаний под ползунками */
+        .klaro .cookie-modal .cm-purpose-description,
+        .klaro .cookie-modal .cm-purpose-description p {
+            color: var(--dark1, #333333) !important; 
+            opacity: 0.8 !important; /* Текст будет светлым на темном фоне и темным на светлом */
+        }
+        
+        /* Приписка "(всегда вкл.)" */
+        .klaro .cookie-modal .cm-always-on {
+            color: var(--dark1, #333333) !important; 
+            opacity: 0.6 !important;
+        }
+
+        /* Кнопка "Отклонить все" в модалке */
+        .klaro .cookie-modal .cm-btn-danger {
+            background-color: transparent !important;
+            color: #555555 !important;
+            border: 1px solid #cccccc !important;
+        }
+        .klaro .cookie-modal .cm-btn-danger:hover {
+            border-color: #ff4a4a !important;
+            color: #ff4a4a !important;
+        }
+
+        /* Кнопка "Принять выбранное" (Делаем светлее в темной теме) */
+        .klaro .cookie-modal .cm-btn-info {
+            background-color: transparent !important;
+            border: 1px solid #0086e6 !important;
+            color: #0086e6 !important;
+        }
+
+        /* Адаптация кнопок для темной темы */
+        @media (prefers-color-scheme: dark) {
+            .klaro .cookie-modal .cm-btn-danger {
+                color: #dddddd !important; /* Светло-серый текст */
+                border-color: #888888 !important; /* Светло-серая рамка */
+            }
+            .klaro .cookie-modal .cm-btn-danger:hover {
+                border-color: #ff4a4a !important;
+                color: #ff4a4a !important;
+            }
+            .klaro .cookie-modal .cm-btn-info {
+                border-color: #4da6ff !important; 
+                color: #4da6ff !important;
+            }
+        }
+
+        /* 8. Адаптация для мобильных устройств (смартфонов) */
+        @media (max-width: 768px) {
+            /* Контейнер нижнего баннера */
+            .klaro .cookie-notice {
+                padding: 25px 0 !important; /* Больше воздуха сверху и снизу */
+            }
+            .klaro .cookie-notice .cn-body {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                justify-content: center !important;
+                gap: 25px !important; /* Увеличиваем отступ между текстом и кнопками */
+                padding: 0 20px !important;
+            }
+
+            /* Текст в нижнем баннере */
+            .klaro .cookie-notice .cn-body p,
+            .klaro .cookie-notice .cn-body .cn-text {
+                flex: none !important;
+                width: 100% !important;
+                padding-right: 0 !important;
+                text-align: left !important;
+                font-size: 14px !important; /* Возвращаем нормальный размер шрифта */
+                line-height: 1.6 !important;
+                margin: 0 !important;
+            }
+            
+            /* Кнопки в нижнем баннере */
+            .klaro .cookie-notice .cn-buttons,
+            .klaro .cookie-notice .cn-ok {
+                display: flex !important;
+                flex: none !important;
+                width: 100% !important;
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 10px !important;
+            }
+            
+            /* Ссылка "Настроить" в нижнем баннере */
+            .klaro .cookie-notice .cn-learn-more {
+                display: block !important;
+                text-align: center !important;
+                width: 100% !important;
+                padding-right: 0 !important;
+                margin-top: 5px !important;
+                order: 3 !important;
+            }
+
+            .klaro .cookie-notice .cm-btn {
+                width: 100% !important;
+                margin: 0 !important;
+                box-sizing: border-box !important;
+            }
+
+            /* Меняем порядок кнопок в нижнем баннере: Принять (1), Отклонить (2) */
+            .klaro .cookie-notice .cm-btn-success,
+            .klaro .cookie-notice .cm-btn-accept {
+                order: 1 !important;
+            }
+            .klaro .cookie-notice .cm-btn-danger {
+                order: 2 !important;
+            }
+
+            /* Кнопки в модальном окне */
+            .klaro .cookie-modal .cm-footer {
+                display: flex !important;
+                flex-direction: column !important;
+                padding: 15px !important;
+            }
+            .klaro .cookie-modal .cm-footer-buttons {
+                display: flex !important;
+                flex-direction: column !important;
+                width: 100% !important;
+                gap: 10px !important;
+            }
+            .klaro .cookie-modal .cm-btn {
+                width: 100% !important;
+                margin: 0 !important;
+                text-align: center !important;
+            }
+            
+            /* Меняем порядок кнопок в модалке: Включить все (1), Принять выбранное (2), Отклонить (3) */
+            .klaro .cookie-modal .cm-btn-success,
+            .klaro .cookie-modal .cm-btn-accept {
+                order: 1 !important;
+            }
+            .klaro .cookie-modal .cm-btn-info {
+                order: 2 !important;
+            }
+            .klaro .cookie-modal .cm-btn-danger {
+                order: 3 !important;
+            }
+            
+            /* Отступы в модальном окне */
+            .klaro .cookie-modal .cm-header,
+            .klaro .cookie-modal .cm-body,
+            .klaro .cookie-modal .cm-purposes {
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+            }
+        }
+    </style>
+
+    <!-- Конфигурация Klaro (эмуляция CS-Cart с режимом Explicit) -->
+    <script>
+        var klaroConfig = {
+            storageMethod: 'cookie',
+            cookieName: 'klaro_test',
+            elementID: 'klaro',
+            lang: 'ru',
+            default: false,          // ← ИСПРАВЛЕНО: ползунки выключены по умолчанию (opt-in)
+            noNotice: false,
+            acceptAll: true,
+            hideDeclineAll: false,    // Показываем кнопку "Отклонить" 
+            hideLearnMore: false,     // ← ИСПРАВЛЕНО: показываем ссылку "Настроить"
+            mustConsent: false,
+            noticeAsModal: false,
+            disablePoweredBy: true,
+            optOut: false,            // ← ИСПРАВЛЕНО: режим opt-in (не opt-out)
+            htmlTexts: true,
+            
+            // Обработчик изменений (для лога)
+            callback: function(consent, service) {
+                logConsent(consent ? 'accept' : 'decline', 
+                    'Сервис "' + service.name + '": ' + (consent ? 'РАЗРЕШЁН' : 'ОТКЛОНЁН'));
+            },
+
+            translations: {
+                ru: {
+                    acceptAll: 'Включить все',
+                    acceptSelected: 'Принять выбранное',
+                    close: 'Закрыть',
+                    decline: 'Отклонить все',
+                    ok: 'Принять',
+                    save: 'Сохранить',
+                    consentModal: {
+                        title: 'Какие cookies мы хотели бы использовать',
+                        description: 'Здесь вы можете увидеть сервисы, которые мы используем на сайте. Также вы можете выбрать, чьи cookies вы разрешаете использовать. Выбор за вами! Подробности есть в этом документе: <a href="#" target="_blank">Политикой обработки персональных данных</a>.'
+                    },
+                    consentNotice: {
+                        title: 'Мы используем cookies',
+                        description: 'Мы используем файлы cookie и аналогичные технологии для обеспечения работы сайта и улучшения вашего опыта. Некоторые из них необходимы, другие помогают нам анализировать использование сайта и показывать релевантную рекламу.',
+                        learnMore: 'Настроить',
+                        changeDescription: 'Со времени вашего последнего визита произошли изменения, обновите своё согласие.'
+                    },
+                    privacyPolicy: {
+                        text: 'Подробнее в нашей {privacyPolicy}.',
+                        name: 'Политике конфиденциальности'
+                    },
+                    purposeItem: {
+                        service: 'сервис',
+                        services: 'сервис(ов)'
+                    },
+                    purposes: {
+                        strictly_necessary: {
+                            title: 'Необходимые cookies',
+                            description: 'Эти cookies обязательны для корректной работы сайта. Например, они позволяют вам разместить заказ, а сайту знать, что вы вошли в учётную запись. Поэтому через сайт отключить такие cookies нельзя.'
+                        },
+                        functional: {
+                            title: 'Функциональные cookies',
+                            description: 'Эти cookies отвечают за дополнительную функциональность на сайте. Их ставят сторонние сервисы, которые мы добавили на сайт: карты, геолокация, возможность войти через учётную запись в социальной сети.'
+                        },
+                        performance: {
+                            title: 'Cookies для оценки работоспособности',
+                            description: 'Эти cookies позволяют нам увидеть, как работает сайт. Информация, которую они собирают, анонимна и обычно представлена в числах. Благодаря этим cookies мы можем улучшать наш сайт.'
+                        },
+                        marketing: {
+                            title: 'Маркетинговые cookies',
+                            description: 'Эти cookies используются для показа персонализированной рекламы и отслеживания эффективности рекламных кампаний. Данные могут передаваться третьим лицам (Google, Meta).'
+                        }
+                    },
+                    service: {
+                        disableAll: {
+                            title: 'Включить или выключить все сервисы',
+                            description: 'Этот переключатель включит или выключит все сервисы разом, кроме обязательных.'
+                        },
+                        optOut: {
+                            title: '(отказаться)',
+                            description: 'Этот сервис загружается по умолчанию (но вы можете от него отказаться)'
+                        },
+                        required: {
+                            title: '(всегда вкл.)',
+                            description: 'Этот сервис необходим для работы сайта и не может быть отключён.'
+                        },
+                        purpose: 'Назначение',
+                        purposes: 'Назначения'
+                    }
+                }
+            },
+
+            // Сервисы (аналогично klaro_config.php + наши дополнения)
+            services: [
+                // === НЕОБХОДИМЫЕ ===
+                {
+                    name: 'site_functionality',
+                    purposes: ['strictly_necessary'],
+                    required: true,
+                    translations: {
+                        ru: {
+                            title: 'Функциональность сайта',
+                            description: 'Cookies, без которых сайт не будет работать: сессия, корзина, авторизация.'
+                        }
+                    }
+                },
+
+                // === ФУНКЦИОНАЛЬНЫЕ ===
+                {
+                    name: 'geo_maps',
+                    purposes: ['functional'],
+                    translations: {
+                        ru: {
+                            title: 'Карты (Яндекс / Google)',
+                            description: 'Используются для отображения интерактивных карт с адресами магазинов и пунктов выдачи.'
+                        }
+                    }
+                },
+
+                // === ОЦЕНКА РАБОТОСПОСОБНОСТИ ===
+                {
+                    name: 'google-analytics',
+                    purposes: ['performance'],
+                    translations: {
+                        ru: {
+                            title: 'Аналитика Google (GA4)',
+                            description: 'Google Analytics собирает анонимную статистику о посещаемости сайта: количество посетителей, популярные страницы, источники трафика.'
+                        }
+                    }
+                },
+                {
+                    name: 'yandex-metrika',
+                    purposes: ['performance'],
+                    translations: {
+                        ru: {
+                            title: 'Яндекс.Метрика',
+                            description: 'Яндекс.Метрика собирает анонимную статистику посещаемости и поведения пользователей на сайте.'
+                        }
+                    }
+                },
+
+                // === МАРКЕТИНГОВЫЕ ===
+                {
+                    name: 'google-ads',
+                    purposes: ['marketing'],
+                    translations: {
+                        ru: {
+                            title: 'Google Реклама',
+                            description: 'Файлы cookie Google Ads используются для показа релевантной рекламы и отслеживания эффективности рекламных кампаний.'
+                        }
+                    }
+                },
+                {
+                    name: 'facebook-pixel',
+                    purposes: ['marketing'],
+                    translations: {
+                        ru: {
+                            title: 'Meta Pixel (Facebook)',
+                            description: 'Meta Pixel отслеживает действия посетителей для показа персонализированной рекламы в Facebook и Instagram.'
+                        }
+                    }
+                }
+            ]
+        };
+
+        // --- Логирование ---
+        function logConsent(type, message) {
+            var log = document.getElementById('consent-log');
+            if (!log) return;
+            var now = new Date().toLocaleTimeString('ru-RU');
+            var cls = type === 'accept' ? 'log-accept' : type === 'decline' ? 'log-decline' : 'log-info';
+            log.innerHTML += '<span class="log-time">[' + now + ']</span> <span class="' + cls + '">' + message + '</span>\n';
+            log.scrollTop = log.scrollHeight;
+        }
+    </script>
+</head>
+<body>
+
+<div class="test-panel">
+    <h1>🧪 Тестовый стенд GDPR <span class="version-badge">Klaro v0.7.22</span></h1>
+    
+    <div class="info">
+        Этот стенд эмулирует баннер согласия на cookies для сайта <strong>velobike.by</strong>.<br>
+        Конфигурация соответствует режиму <code>Explicit</code> (явное согласие, opt-in).
+    </div>
+
+    <h2>📋 Что проверить</h2>
+    <ul class="check-list">
+        <li>Баннер появляется внизу страницы при первом визите</li>
+        <li>Все ползунки <strong>выключены</strong> по умолчанию (кроме «Необходимые»)</li>
+        <li>«Необходимые cookies» — <strong>всегда включены</strong>, ползунок заблокирован</li>
+        <li>Категория «Маркетинговые cookies» — <strong>присутствует</strong> (Google Ads, Meta Pixel)</li>
+        <li>Категория «Оценка работоспособности» — присутствует (GA4, Яндекс.Метрика)</li>
+        <li>Кнопка «Настроить» открывает модальное окно со списком всех сервисов</li>
+        <li>Кнопка «Отклонить все» — присутствует</li>
+        <li>Ползунки (переключатели) отображаются корректно, без квадратных галочек</li>
+    </ul>
+
+    <h2>🎮 Управление</h2>
+    <button class="btn" onclick="klaro.show(klaroConfig, true)">📋 Открыть окно настроек</button>
+    <button class="btn btn-danger" onclick="resetConsent()">🗑 Сбросить согласие</button>
+    <button class="btn" onclick="showCurrentConsent()">📊 Показать текущие согласия</button>
+
+    <h2>📝 Лог событий</h2>
+    <div id="consent-log"><span class="log-info">Стенд загружен. Ожидание действий пользователя...</span>
+</div>
+
+    <div class="status status-warn" id="status-panel">
+        ⚠️ <strong>Примечание:</strong> Здесь отображаются «чистые» стили Klaro v0.7.22 без влияния UniTheme2. 
+        Если ползунки тут выглядят правильно, а на боевом сайте — нет, значит проблема точно в конфликте стилей темы, 
+        и нужно добавить CSS-фикс в пользовательские стили.
+    </div>
+</div>
+
+<!-- Подключаем обновлённый Klaro v0.7.22 -->
+<script defer src="../js/addons/gdpr/lib/klaro.js"></script>
+
+<script>
+    function resetConsent() {
+        // Удаляем cookie Klaro
+        document.cookie = 'klaro_test=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        logConsent('info', '🗑 Cookie согласия удалена. Перезагрузка...');
+        setTimeout(function() { location.reload(); }, 500);
+    }
+
+    function showCurrentConsent() {
+        try {
+            var manager = klaro.getManager(klaroConfig);
+            var consents = manager.consents;
+            var msg = '📊 Текущие согласия:\n';
+            for (var key in consents) {
+                msg += '   ' + key + ': ' + (consents[key] ? '✅ Разрешён' : '❌ Отклонён') + '\n';
+            }
+            logConsent('info', msg);
+        } catch(e) {
+            logConsent('decline', 'Ошибка: ' + e.message);
+        }
+    }
+
+    // Логируем загрузку
+    window.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+            logConsent('info', '✅ Klaro v0.7.22 загружен. Баннер должен появиться внизу страницы.');
+        }, 500);
+    });
+</script>
+
+</body>
+</html>

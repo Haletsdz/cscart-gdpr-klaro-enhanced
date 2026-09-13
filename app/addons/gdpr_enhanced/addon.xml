@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<addon scheme="3.0" edition_type="ROOT,ULT:VENDOR">
+    <id>gdpr_enhanced</id>
+    <version>1.0.0</version>
+    <priority>10000</priority>
+    <position>0</position>
+    <status>active</status>
+    <default_language>ru</default_language>
+    <auto_install>MULTIVENDOR,ULTIMATE</auto_install>
+
+    <compatibility>
+        <dependencies>gdpr</dependencies>
+        <core_version>
+            <min>4.17.1</min>
+        </core_version>
+    </compatibility>
+
+    <authors>
+        <author>
+            <name>Velobike.by</name>
+            <url>https://velobike.by</url>
+        </author>
+    </authors>
+</addon>

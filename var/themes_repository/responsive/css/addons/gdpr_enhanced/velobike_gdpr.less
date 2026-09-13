@@ -1,0 +1,305 @@
+        /* === Стили Velobike.by для Klaro === */
+        
+        /* === Стили Velobike.by для Klaro (Безопасная версия) === */
+        
+        /* 1. Базовые переменные Klaro */
+        .klaro {
+            --green1: #ffd600; /* Желтый - включенный ползунок */
+            --green2: #e5c000; /* Желтый при наведении */
+            --green3: #ff4a4a; /* Красный */
+            --blue1: #0086e6;  /* Синие ссылки в модалке */
+            --light1: #ffffff; /* Текст на темном фоне */
+            --dark1: #18233e;  /* Темно-синий фон шапки Velobike */
+            --white1: #ffffff; /* Фон модального окна */
+            --font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+            --border-radius: 4px;
+            --notice-max-width: 100%; /* Баннер на всю ширину */
+            --notice-bottom: 0;
+            --notice-left: 0;
+        }
+
+        /* 2. Стили для нижнего баннера (уведомления) */
+        .klaro .cookie-notice {
+            background-color: #18233e !important; /* Темно-синий фон */
+            border-top: 3px solid #ffd600 !important; /* Желтая полоска сверху */
+            padding: 20px 0 !important; /* Убираем боковые отступы, они будут во внутреннем блоке */
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.2) !important;
+        }
+
+        /* Выравнивание по центру экрана с макс. шириной (Flexbox) */
+        .klaro .cookie-notice .cn-body {
+            max-width: 1200px !important; /* Не даем тексту разъезжаться на 4K мониторах */
+            margin: 0 auto !important;
+            padding: 0 20px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            flex-wrap: wrap !important;
+            gap: 20px !important;
+        }
+
+        /* Текст внутри баннера */
+        .klaro .cookie-notice .cn-body p,
+        .klaro .cookie-notice .cn-body .cn-text {
+            flex: 1 1 500px !important; /* Текст занимает свободное место, но не меньше 500px если позволяет экран */
+            color: #ffffff !important;
+            font-size: 14px !important;
+            line-height: 1.6 !important;
+            margin: 0 !important;
+            padding-right: 20px !important;
+        }
+
+        /* Контейнер для кнопок и ссылок */
+        .klaro .cookie-notice .cn-buttons {
+            display: flex !important;
+            align-items: center !important;
+            gap: 15px !important;
+            flex-wrap: wrap !important;
+            margin: 0 !important;
+        }
+
+        /* Ссылка "Настроить" */
+        .klaro .cookie-notice .cn-learn-more {
+            color: #ffffff !important;
+            text-decoration: underline !important;
+            font-weight: 400 !important;
+            margin: 0 !important;
+            padding-right: 15px !important;
+            opacity: 0.7 !important;
+            font-size: 13px !important;
+            transition: opacity 0.2s, color 0.2s !important;
+        }
+        .klaro .cookie-notice .cn-learn-more:hover {
+            color: #ffd600 !important;
+            opacity: 1 !important;
+        }
+
+        /* 3. Общие стили кнопок */
+        .klaro .cm-btn {
+            text-transform: uppercase !important;
+            font-weight: 700 !important;
+            font-size: 12px !important;
+            letter-spacing: 0.5px !important;
+            border-radius: 4px !important;
+            padding: 10px 20px !important;
+            margin: 0 !important;
+        }
+
+        /* 4. Кнопки в нижнем баннере (Темный фон) */
+        /* Кнопка "Принять" */
+        .klaro .cookie-notice .cm-btn-success,
+        .klaro .cookie-notice .cm-btn-accept {
+            background-color: #ffd600 !important;
+            color: #18233e !important; /* Темный текст на желтом */
+            border: none !important;
+        }
+        .klaro .cookie-notice .cm-btn-success:hover,
+        .klaro .cookie-notice .cm-btn-accept:hover {
+            background-color: #e5c000 !important;
+        }
+        
+        /* Кнопка "Отклонить все" */
+        .klaro .cookie-notice .cm-btn-danger {
+            background-color: transparent !important;
+            border: 1px solid rgba(255, 255, 255, 0.4) !important;
+            color: #ffffff !important;
+            opacity: 0.9 !important;
+        }
+        .klaro .cookie-notice .cm-btn-danger:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            border-color: #ffffff !important;
+            opacity: 1 !important;
+        }
+
+        /* 5. Кнопки в модальном окне настроек (Светлый фон) */
+        .klaro .cookie-modal {
+            color: #333 !important; /* Темный текст */
+            overscroll-behavior: contain; /* Блокировка прокрутки фона для старых браузеров */
+        }
+        
+        /* БЛОКИРОВКА ПРОКРУТКИ СТРАНИЦЫ ПРИ ОТКРЫТОМ МОДАЛЬНОМ ОКНЕ */
+        body:has(.klaro .cookie-modal) {
+            overflow: hidden !important;
+        }
+        .klaro .cookie-modal .cm-btn-success,
+        .klaro .cookie-modal .cm-btn-accept {
+            background-color: #ffd600 !important;
+            color: #18233e !important;
+        }
+        .klaro .cookie-modal .cm-btn-danger {
+            background-color: transparent !important;
+            border: 1px solid #ccc !important;
+            color: #555 !important;
+        }
+        .klaro .cookie-modal .cm-btn-info {
+            background-color: transparent !important;
+            border: 1px solid #0086e6 !important;
+            color: #0086e6 !important;
+        }
+        .klaro .cookie-modal .cm-btn-info:hover {
+            background-color: #0086e6 !important;
+            color: #fff !important;
+        }
+
+        /* 6. Исправление ползунков (чтобы кружок не сливался с фоном) */
+        .klaro .slider {
+            background-color: #777777 !important; /* Отчетливый серый фон выключенного ползунка */
+        }
+        .klaro .cm-list-input:checked + .cm-list-label .slider {
+            background-color: #ffd600 !important; /* Желтый фон включенного ползунка */
+        }
+        .klaro .slider::before {
+            background-color: #ffffff !important; /* Белый кружок */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4) !important; /* Небольшая тень для объема */
+        }
+
+        /* 7. Фикс читаемости текста (Адаптация под темную и светлую тему) */
+        
+        /* Текст описаний под ползунками */
+        .klaro .cookie-modal .cm-purpose-description,
+        .klaro .cookie-modal .cm-purpose-description p {
+            color: var(--dark1, #333333) !important; 
+            opacity: 0.8 !important; /* Текст будет светлым на темном фоне и темным на светлом */
+        }
+        
+        /* Приписка "(всегда вкл.)" */
+        .klaro .cookie-modal .cm-always-on {
+            color: var(--dark1, #333333) !important; 
+            opacity: 0.6 !important;
+        }
+
+        /* Кнопка "Отклонить все" в модалке */
+        .klaro .cookie-modal .cm-btn-danger {
+            background-color: transparent !important;
+            color: #555555 !important;
+            border: 1px solid #cccccc !important;
+        }
+        .klaro .cookie-modal .cm-btn-danger:hover {
+            border-color: #ff4a4a !important;
+            color: #ff4a4a !important;
+        }
+
+        /* Кнопка "Принять выбранное" (Делаем светлее в темной теме) */
+        .klaro .cookie-modal .cm-btn-info {
+            background-color: transparent !important;
+            border: 1px solid #0086e6 !important;
+            color: #0086e6 !important;
+        }
+
+        /* Адаптация кнопок для темной темы */
+        @media (prefers-color-scheme: dark) {
+            .klaro .cookie-modal .cm-btn-danger {
+                color: #dddddd !important; /* Светло-серый текст */
+                border-color: #888888 !important; /* Светло-серая рамка */
+            }
+            .klaro .cookie-modal .cm-btn-danger:hover {
+                border-color: #ff4a4a !important;
+                color: #ff4a4a !important;
+            }
+            .klaro .cookie-modal .cm-btn-info {
+                border-color: #4da6ff !important; 
+                color: #4da6ff !important;
+            }
+        }
+
+        /* 8. Адаптация для мобильных устройств (смартфонов) */
+        @media (max-width: 768px) {
+            /* Контейнер нижнего баннера */
+            .klaro .cookie-notice {
+                padding: 25px 0 !important; /* Больше воздуха сверху и снизу */
+            }
+            .klaro .cookie-notice .cn-body {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                justify-content: center !important;
+                gap: 25px !important; /* Увеличиваем отступ между текстом и кнопками */
+                padding: 0 20px !important;
+            }
+
+            /* Текст в нижнем баннере */
+            .klaro .cookie-notice .cn-body p,
+            .klaro .cookie-notice .cn-body .cn-text {
+                flex: none !important;
+                width: 100% !important;
+                padding-right: 0 !important;
+                text-align: left !important;
+                font-size: 14px !important; /* Возвращаем нормальный размер шрифта */
+                line-height: 1.6 !important;
+                margin: 0 !important;
+            }
+            
+            /* Кнопки в нижнем баннере */
+            .klaro .cookie-notice .cn-buttons,
+            .klaro .cookie-notice .cn-ok {
+                display: flex !important;
+                flex: none !important;
+                width: 100% !important;
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 10px !important;
+            }
+            
+            /* Ссылка "Настроить" в нижнем баннере */
+            .klaro .cookie-notice .cn-learn-more {
+                display: block !important;
+                text-align: center !important;
+                width: 100% !important;
+                padding-right: 0 !important;
+                margin-top: 5px !important;
+                order: 3 !important;
+            }
+
+            .klaro .cookie-notice .cm-btn {
+                width: 100% !important;
+                margin: 0 !important;
+                box-sizing: border-box !important;
+            }
+
+            /* Меняем порядок кнопок в нижнем баннере: Принять (1), Отклонить (2) */
+            .klaro .cookie-notice .cm-btn-success,
+            .klaro .cookie-notice .cm-btn-accept {
+                order: 1 !important;
+            }
+            .klaro .cookie-notice .cm-btn-danger {
+                order: 2 !important;
+            }
+
+            /* Кнопки в модальном окне */
+            .klaro .cookie-modal .cm-footer {
+                display: flex !important;
+                flex-direction: column !important;
+                padding: 15px !important;
+            }
+            .klaro .cookie-modal .cm-footer-buttons {
+                display: flex !important;
+                flex-direction: column !important;
+                width: 100% !important;
+                gap: 10px !important;
+            }
+            .klaro .cookie-modal .cm-btn {
+                width: 100% !important;
+                margin: 0 !important;
+                text-align: center !important;
+            }
+            
+            /* Меняем порядок кнопок в модалке: Включить все (1), Принять выбранное (2), Отклонить (3) */
+            .klaro .cookie-modal .cm-btn-success,
+            .klaro .cookie-modal .cm-btn-accept {
+                order: 1 !important;
+            }
+            .klaro .cookie-modal .cm-btn-info {
+                order: 2 !important;
+            }
+            .klaro .cookie-modal .cm-btn-danger {
+                order: 3 !important;
+            }
+            
+            /* Отступы в модальном окне */
+            .klaro .cookie-modal .cm-header,
+            .klaro .cookie-modal .cm-body,
+            .klaro .cookie-modal .cm-purposes {
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+            }
+        }
+    

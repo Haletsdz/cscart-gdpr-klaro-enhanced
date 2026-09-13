@@ -1,0 +1,70 @@
+<?php
+/***************************************************************************
+ *   GDPR Enhanced — Расширение модуля GDPR для CS-Cart                    *
+ *   Маркетинговые сервисы + исправление режима Explicit (opt-in)          *
+ *                                                                          *
+ *   Этот файл загружается ПОСЛЕ оригинального klaro_config.php            *
+ *   и безопасно модифицирует конфигурацию, не трогая файлы ядра.          *
+ ***************************************************************************/
+
+defined('BOOTSTRAP') or die('Access denied');
+
+// --- Исправление: принудительно выключаем все ползунки по умолчанию ---
+// В стандартном CS-Cart в режиме Explicit (opt-in) ползунки всё равно были ON.
+// Это нарушает GDPR: пользователь должен САМИ включить каждый сервис.
+$schema['default'] = false;
+
+// --- Маркетинговые и аналитические сервисы ---
+// Эти сервисы подключены через сторонние модули (UniTheme, GTM и т.д.),
+// поэтому стандартный GDPR-модуль CS-Cart о них не знает.
+// Добавляем их вручную, чтобы они появились в баннере согласия.
+
+// Google Analytics (GA4)
+$schema['services']['google-analytics'] = [
+    'purposes'     => ['performance'],
+    'name'         => 'google-analytics',
+    'translations' => [
+        'zz' => [
+            'title'       => 'Аналитика Google (GA4)',
+            'description' => 'Google Analytics собирает анонимную статистику о посещаемости сайта: количество посетителей, популярные страницы, источники трафика. Данные используются для улучшения сайта.',
+        ],
+    ],
+];
+
+// Яндекс.Метрика
+$schema['services']['yandex-metrika'] = [
+    'purposes'     => ['performance'],
+    'name'         => 'yandex-metrika',
+    'translations' => [
+        'zz' => [
+            'title'       => 'Яндекс.Метрика',
+            'description' => 'Яндекс.Метрика собирает анонимную статистику посещаемости и поведения пользователей на сайте.',
+        ],
+    ],
+];
+
+// Google Реклама (Ads)
+$schema['services']['google-ads'] = [
+    'purposes'     => ['marketing'],
+    'name'         => 'google-ads',
+    'translations' => [
+        'zz' => [
+            'title'       => 'Google Реклама',
+            'description' => 'Файлы cookie Google Ads используются для показа релевантной рекламы и отслеживания эффективности рекламных кампаний. Данные передаются в Google.',
+        ],
+    ],
+];
+
+// Meta Pixel (Facebook / Instagram)
+$schema['services']['facebook-pixel'] = [
+    'purposes'     => ['marketing'],
+    'name'         => 'facebook-pixel',
+    'translations' => [
+        'zz' => [
+            'title'       => 'Meta Pixel (Facebook)',
+            'description' => 'Meta Pixel отслеживает действия посетителей на сайте для показа персонализированной рекламы в Facebook и Instagram. Данные передаются в Meta.',
+        ],
+    ],
+];
+
+return $schema;

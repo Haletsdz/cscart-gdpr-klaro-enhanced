@@ -32,9 +32,15 @@ $schema['services']['google-analytics'] = [
 ];
 
 // Яндекс.Метрика
-$schema['services']['yandex-metrika'] = [
+// ВАЖНО: используем тот же ключ "yandex_metrika" (с подчёркиванием), что и родной
+// аддон rus_yandex_metrika (app/addons/rus_yandex_metrika/schemas/gdpr/klaro_config.post.php).
+// Если писать через дефис ("yandex-metrika"), в баннере согласия появляются ДВА
+// пункта про Яндекс.Метрику одновременно (наш + родной), т.к. Klaro считает их
+// разными сервисами. Здесь мы просто переопределяем текст родного пункта, а не
+// создаём новый — ключ должен совпадать 1-в-1.
+$schema['services']['yandex_metrika'] = [
     'purposes'     => ['performance'],
-    'name'         => 'yandex-metrika',
+    'name'         => 'yandex_metrika',
     'translations' => [
         'zz' => [
             'title'       => 'Яндекс.Метрика',

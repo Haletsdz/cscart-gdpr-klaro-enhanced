@@ -13,6 +13,10 @@
    - Исправлена читаемость текста в темной теме ОС (Dark Mode).
    - Блокируется прокрутка заднего фона страницы (body) при открытом окне настроек (используется `:has()` селектор).
    - Устранен конфликт галочек-переключателей с темой UniTheme2.
+5. **Реально блокирует счётчик Яндекс.Метрики (`rus_yandex_metrika`) до согласия.** Родной аддон CS-Cart только показывает тумблер в баннере, но запускает счётчик безусловно по событию `ce.commoninit`, независимо от выбора пользователя. Модуль переопределяет `hooks/index/scripts.post.tpl` этого аддона и оборачивает инициализацию в `<script type="text/plain" data-name="yandex_metrika">`, так что Klaro реально решает, грузить счётчик или нет.
+6. **Реально блокирует Meta Pixel (`ab__product_fe05_facebook_ads`) до согласия.** Аддон инициализировал `fbq('init', ...)` и `fbq('track', 'PageView')` безусловно в `hooks/index/body.pre.tpl`. Модуль переопределяет этот файл и оборачивает пиксель в `<script type="text/plain" data-name="facebook-pixel">`. Резервный `<noscript><img ... facebook.com/tr?...></noscript>`-пиксель (для браузеров без JS) намеренно убран из фикса — его нельзя обусловить согласием технически, поэтому единственный строго совместимый вариант — не использовать его вовсе (см. комментарий в самом файле).
+
+**Статус GA4 (`rf_google_ecommerce`): уже работает корректно, вмешательство не потребовалось.** Весь код счётчика (и `hooks/index/head_scripts.post.tpl`, и `hooks/index/body.post.tpl`) уже обёрнут аддоном в собственную проверку `{if "rf_google_ecommerce"|fn_rf_google_ecommerce_check_gdpr}` — это его собственная, отдельная от Klaro логика (проверяет согласие на стороне PHP до рендера страницы). Проверено вручную в DevTools на velobike.by, включая точечный сценарий: если включить все остальные сервисы, но конкретно «Google Analytics» оставить выключенным — `gtag.js` не грузится; при включении именно этого пункта — грузится. Проверка гасит отказ именно от нужного сервиса, а не факт согласия в целом.
 
 ## Установка
 
@@ -24,16 +28,20 @@
 4. Очистите кэш (Администрирование -> Очистить кэш).
 
 > **Важно для сторонних счетчиков:**
-> Чтобы Klaro блокировал ваши счетчики до получения согласия, в их коде нужно изменить тег `<script>` следующим образом:
+> Сама по себе регистрация сервиса в схеме (`klaro_config.post.php`) только добавляет пункт в баннер — она НЕ блокирует загрузку счетчика. Реальная блокировка работает только если тег счетчика оформлен так:
 > ```html
 > <script type="text/plain" data-type="application/javascript" data-name="google-analytics">
 >   // Ваш код GA4
 > </script>
 > ```
-> Доступные `data-name`: `google-analytics`, `google-ads`, `yandex-metrika`, `facebook-pixel`.
+> Доступные `data-name`: `google-analytics`, `google-ads`, `yandex_metrika` (**с подчёркиванием** — совпадает с ключом родного аддона `rus_yandex_metrika`, чтобы не плодить второй пункт в баннере), `facebook-pixel`.
+>
+> `rf_google_ecommerce` (GA4) в эту обёртку не нуждается — у него своя проверка согласия на уровне PHP, подтверждена тестом на живом сайте (см. «Статус GA4» выше).
 
 ## Структура модуля
 - `app/addons/gdpr_enhanced/` - конфигурация модуля и переопределение схемы (`klaro_config.post.php`).
 - `js/addons/gdpr_enhanced/lib/` - обновленная библиотека `klaro.js`.
 - `var/themes_repository/responsive/css/addons/gdpr_enhanced/` - обновленный `klaro.css` и кастомные стили `velobike_gdpr.less`.
-- `var/themes_repository/responsive/templates/addons/gdpr_enhanced/overrides/` - шаблоны-хуки, которые подменяют загрузку старого скрипта на новый.
+- `var/themes_repository/responsive/templates/addons/gdpr_enhanced/overrides/addons/gdpr/` - шаблоны-хуки, которые подменяют загрузку старого `klaro.js`/`klaro.css` на новые (переопределение файлов родного аддона `gdpr`).
+- `var/themes_repository/responsive/templates/addons/gdpr_enhanced/overrides/addons/rus_yandex_metrika/` - переопределение `scripts.post.tpl` родного аддона `rus_yandex_metrika`, реально блокирующее счётчик до согласия (п.5 выше).
+- `var/themes_repository/responsive/templates/addons/gdpr_enhanced/overrides/addons/ab__product_fe05_facebook_ads/` - переопределение `body.pre.tpl` этого аддона, реально блокирующее Meta Pixel до согласия (п.6 выше).
